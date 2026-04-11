@@ -26,14 +26,7 @@ export default function InstancesPage() {
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Raw performance at the edge. Deploy scalable virtual machines or dedicated bare-metal nodes across our Lagos-based data centers in under 60 seconds.
             </p>
-            <div className="flex justify-center gap-4 pt-6">
-              <Link href="/waitlist" className="bg-primary text-primary-foreground hover:opacity-90 font-bold px-10 py-4 rounded-xl transition-all shadow-xl shadow-primary/20">
-                Join the Waitlist
-              </Link>
-              <Link href="https://docs.servafri.com/compute" className="bg-background border text-foreground hover:bg-muted font-bold px-10 py-4 rounded-xl transition-colors">
-                View Specifications
-              </Link>
-            </div>
+      
             <p className="text-sm text-muted-foreground pt-4 font-medium italic">
               Lagos Tier-4 Data Center · NVMe Local Storage · 100Gbps Backbone · Zero Egress Fees
             </p>
