@@ -26,14 +26,7 @@ export default function FirewallsPage() {
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Protect your infrastructure with stateful firewalls at the edge. Block malicious traffic before it ever reaches your servers.
             </p>
-            <div className="flex justify-center gap-4 pt-6">
-              <Link href="/waitlist" className="bg-primary text-primary-foreground hover:opacity-90 font-bold px-10 py-4 rounded-xl transition-all shadow-xl shadow-primary/20">
-                Join the Waitlist
-              </Link>
-              <Link href="https://docs.servafri.com/firewalls" className="bg-background border text-foreground hover:bg-muted font-bold px-10 py-4 rounded-xl transition-colors">
-                Technical Docs
-              </Link>
-            </div>
+        
           </div>
         </section>
 
