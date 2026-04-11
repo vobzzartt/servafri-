@@ -26,14 +26,7 @@ export default function DatabasesPage() {
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Scale your data with AWS-level durability. Managed PostgreSQL, MySQL, and Redis with automatic backups and sub-10ms localized latency.
             </p>
-            <div className="flex justify-center gap-4 pt-6">
-              <Link href="/waitlist" className="bg-primary text-primary-foreground hover:opacity-90 font-bold px-10 py-4 rounded-xl transition-all shadow-xl shadow-primary/20">
-                Join the Waitlist
-              </Link>
-              <Link href="https://docs.servafri.com/databases" className="bg-background border text-foreground hover:bg-muted font-bold px-10 py-4 rounded-xl transition-colors">
-                Technical Docs
-              </Link>
-            </div>
+           
           </div>
         </section>
 
