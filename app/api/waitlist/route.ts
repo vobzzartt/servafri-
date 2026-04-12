@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse, after } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { confirmationEmailTemplate } from '@/lib/emails/confirmation-template'
 import { notificationEmailTemplate } from '@/lib/emails/notification-template'
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { name, email } = body as { name?: string; email?: string }
 
-    // Trim inputs before validation to prevent whitespace entries
+    // Trim inputs for robust validation
     const trimmedName = name?.trim()  ''
     const trimmedEmail = email?.trim().toLowerCase()  ''
 
@@ -54,55 +54,43 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // ── Primary Emails (Immediate) ──
-    // resend.emails.send returns { data, error } and does not throw for API failures
-    const [confirmRes, notifyRes] = await Promise.all([
+    // ── Emails ──
+    
+    const results = await Promise.allSettled([
+      // 1. Initial Confirmation to user
       resend.emails.send({
         from: 'ServAfri <hello@servafri.com>',
         to: [trimmedEmail],
-        subject: 'Welcome to ServAfri',
+        subject: Welcome to ServAfri,
         html: confirmationEmailTemplate(trimmedName)
       }),
+      // 2. Notification to the team
       resend.emails.send({
         from: 'Waitlist System <hello@servafri.com>',
         to: ['hello@servafri.com'],
         replyTo: trimmedEmail,
-        subject: 'Someone just joined the waitlist',
+        subject: Someone just joined the waitlist,
         html: notificationEmailTemplate(trimmedName, trimmedEmail)
       }),
-    ])
-
-    // Log Resend errors if they exist
-    if (confirmRes.error) {
-      console.error('[Waitlist] Failed to send confirmation email:', confirmRes.error)
-    }
-    if (notifyRes.error) {
-      console.error('[Waitlist] Failed to send notification email:', notifyRes.error)
-    }
-
-    // ── Background Emails (using Next.js after) ──
-    // This runs after the response is sent to the user
-    after(async () => {
-      const { error } = await resend.emails.send({
+      // 3. Founder Note
+      resend.emails.send({
         from: 'Victor Bodude <hello@servafri.com>',
         to: [trimmedEmail],
         replyTo: 'victorbodude@gmail.com',
-        subject: 'A note from the founder',
+        subject: A note from the founder,
         html: founderEmailTemplate(trimmedName)
       })
-      
-      if (error) {
-        console.error('[Waitlist] Failed to send founder email in background:', error)
+    ])
+
+    // Log any failures for debugging
+    results.forEach((result, i) => {
+      const label = ['Confirmation', 'Notification', 'Founder Note'][i]
+      if (result.status === 'rejected') {
+        console.error([Waitlist] ${label} Network/SDK Error:, result.reason)
+      } else if (result.value.error) {
+        console.error([Waitlist] ${label} API Error:, result.value.error)
       }
     })
-
-    // If both primary emails failed, return an error to the user
-    if (confirmRes.error && notifyRes.error) {
-      return NextResponse.json(
-        { error: 'Failed to send emails. Please try again later.' },
-        { status: 500 }
-      )
-    }
 
     return NextResponse.json({ success: true })
   } catch (err) {
