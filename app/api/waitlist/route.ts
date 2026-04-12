@@ -1,10 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
 import { Resend } from 'resend'
 import { confirmationEmailTemplate } from '@/lib/emails/confirmation-template'
 import { notificationEmailTemplate } from '@/lib/emails/notification-template'
 import { founderEmailTemplate } from '@/lib/emails/founder-template'
-import fs from 'fs'
-import path from 'path'
 import { supabase } from '@/lib/supabase'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -29,14 +27,11 @@ export async function POST(req: NextRequest) {
 
     // ── Database Save ──
     try {
-      // We attempt to insert directly. 
-      // PostgreSQL will automatically block duplicates via the UNIQUE constraint.
       const { error: insertError } = await supabase
         .from('waitlist')
         .insert({ name: trimmedName, email: trimmedEmail })
 
       if (insertError) {
-        // Check if the error is a "Duplicate Key" error (PostgreSQL code 23505)
         if (insertError.code === '23505') {
           return NextResponse.json(
             { error: 'You are already on the waitlist!' },
@@ -58,39 +53,37 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // ── Emails ──
-
-    // ── Send emails immediately ──
+    // ── Primary Emails (Immediate) ──
     const [confirmResult, notifyResult] = await Promise.allSettled([
-      // 1. Initial Confirmation to user (arrives first)
       resend.emails.send({
         from: 'ServAfri <hello@servafri.com>',
         to: [trimmedEmail],
-        subject: `Welcome to ServAfri`,
+        subject: Welcome to ServAfri,
         html: confirmationEmailTemplate(trimmedName)
       }),
-      // 2. Notification to the team
       resend.emails.send({
         from: 'Waitlist System <hello@servafri.com>',
         to: ['hello@servafri.com'],
         replyTo: trimmedEmail,
-        subject: `Someone just joined the waitlist`,
+        subject: Someone just joined the waitlist,
         html: notificationEmailTemplate(trimmedName, trimmedEmail)
       }),
     ])
 
-    // Wait 1 minute in the background for the founder email (will work on local node servers reliably)
-    setTimeout(() => {
+    // ── Background Emails (using Next.js after) ──
+    // This allows the response to be sent to the user immediately
+    // while the email continues in the background safely on Vercel.
+    after(() => {
+      
       resend.emails.send({
         from: 'Victor Bodude <hello@servafri.com>',
         to: [trimmedEmail],
         replyTo: 'victorbodude@gmail.com',
-        subject: `A note from the founder`,
+        subject: A note from the founder,
         html: founderEmailTemplate(trimmedName)
       }).catch(console.error)
-    }, 60000)
+    })
 
-    // Log any failures
     if (confirmResult.status === 'rejected') {
       console.error('[Waitlist] Failed to send confirmation email:', confirmResult.reason)
     }
@@ -98,7 +91,6 @@ export async function POST(req: NextRequest) {
       console.error('[Waitlist] Failed to send notification email:', notifyResult.reason)
     }
 
-    // Since we queue the founder email asynchronously, we only check the main failure conditionally:
     if (confirmResult.status === 'rejected' && notifyResult.status === 'rejected') {
       return NextResponse.json(
         { error: 'Failed to send emails. Please try again later.' },
