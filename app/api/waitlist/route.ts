@@ -3,6 +3,8 @@ import { Resend } from 'resend'
 import { confirmationEmailTemplate } from '@/lib/emails/confirmation-template'
 import { notificationEmailTemplate } from '@/lib/emails/notification-template'
 import { founderEmailTemplate } from '@/lib/emails/founder-template'
+import fs from 'fs'
+import path from 'path'
 import { supabase } from '@/lib/supabase'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -12,19 +14,18 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { name, email } = body as { name?: string; email?: string }
 
-    // Trim inputs for robust validation
-    const trimmedName = name?.trim()  ''
-    const trimmedEmail = email?.trim().toLowerCase()  ''
-
     // ── Validation ──
-    if (!trimmedName || !trimmedEmail) {
+    if (!name || !email) {
       return NextResponse.json({ error: 'Name and email are required.' }, { status: 400 })
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(trimmedEmail)) {
+    if (!emailRegex.test(email)) {
       return NextResponse.json({ error: 'Invalid email address.' }, { status: 400 })
     }
+
+    const trimmedName = name.trim()
+    const trimmedEmail = email.trim().toLowerCase()
 
     // ── Database Save ──
     try {
@@ -55,13 +56,12 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Emails ──
-    
-    const results = await Promise.allSettled([
+    const [confirmResult, notifyResult, founderResult] = await Promise.allSettled([
       // 1. Initial Confirmation to user
       resend.emails.send({
         from: 'ServAfri <hello@servafri.com>',
         to: [trimmedEmail],
-        subject: Welcome to ServAfri,
+        subject: 'Welcome to ServAfri',
         html: confirmationEmailTemplate(trimmedName)
       }),
       // 2. Notification to the team
@@ -69,28 +69,40 @@ export async function POST(req: NextRequest) {
         from: 'Waitlist System <hello@servafri.com>',
         to: ['hello@servafri.com'],
         replyTo: trimmedEmail,
-        subject: Someone just joined the waitlist,
+        subject: 'Someone just joined the waitlist',
         html: notificationEmailTemplate(trimmedName, trimmedEmail)
       }),
-      // 3. Founder Note
+      // 3. Founder email (sent immediately)
       resend.emails.send({
         from: 'Victor Bodude <hello@servafri.com>',
         to: [trimmedEmail],
         replyTo: 'victorbodude@gmail.com',
-        subject: A note from the founder,
+        subject: 'A note from the founder',
         html: founderEmailTemplate(trimmedName)
       })
     ])
 
-    // Log any failures for debugging
-    results.forEach((result, i) => {
-      const label = ['Confirmation', 'Notification', 'Founder Note'][i]
-      if (result.status === 'rejected') {
-        console.error([Waitlist] ${label} Network/SDK Error:, result.reason)
-      } else if (result.value.error) {
-        console.error([Waitlist] ${label} API Error:, result.value.error)
-      }
-    })
+    // Log any failures
+    if (confirmResult.status === 'rejected') {
+      console.error('[Waitlist] Failed to send confirmation email:', confirmResult.reason)
+    }
+    if (notifyResult.status === 'rejected') {
+      console.error('[Waitlist] Failed to send notification email:', notifyResult.reason)
+    }
+    if (founderResult.status === 'rejected') {
+      console.error('[Waitlist] Failed to send founder email:', founderResult.reason)
+    }
+
+    if (
+      confirmResult.status === 'rejected' &&
+      notifyResult.status === 'rejected' &&
+      founderResult.status === 'rejected'
+    ) {
+      return NextResponse.json(
+        { error: 'Failed to send emails. Please try again later.' },
+        { status: 500 }
+      )
+    }
 
     return NextResponse.json({ success: true })
   } catch (err) {
