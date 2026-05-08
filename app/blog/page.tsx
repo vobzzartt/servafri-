@@ -5,29 +5,17 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Engineering Blog | ServAfri',
+  title: 'Blog | ServAfri',
   description: 'Read the latest updates, engineering deep dives, and scaling stories from the ServAfri team.',
 }
 
 export default function BlogPage() {
   const posts = [
     {
-      title: "Why African Startups Should Stop Defaulting to AWS",
-      date: "Oct 15, 2025",
-      summary: "Exploring the latency, pricing, and support disparities when African startups rely on generic, non-localized global cloud providers.",
-      slug: "/blog/aws-startups"
-    },
-    {
-      title: "Scaling our Managed Kubernetes Control Plane",
-      date: "Sep 28, 2025",
-      summary: "A technical deep dive into how we re-architected our control plane routing to achieve zero-downtime upgrades.",
-      slug: "/blog/scale-k8s"
-    },
-    {
-      title: "Introducing ServAfri App Platform",
-      date: "Sep 12, 2025",
-      summary: "The fastest way to deploy your code in Africa. Push to git, and we'll handle the build, deploy, and global CDN caching.",
-      slug: "/blog/app-platform"
+      title: "Rebuilding Africa’s Cloud Future — The Servafri Story",
+      date: "October 13, 2025",
+      summary: "Africa has always been full of creativity, hustle, and raw talent. This is the gap that led to Servafri—the cloud platform created specifically for Africa.",
+      slug: "/blog/servafri-story"
     }
   ]
 
@@ -37,7 +25,7 @@ export default function BlogPage() {
       <main className="min-h-screen pt-24 md:pt-32 pb-16 md:pb-32">
         <section className="mx-auto max-w-5xl px-6">
           <div className="space-y-6 max-w-3xl mb-16 md:mb-24">
-            <h1 className="text-4xl font-semibold lg:text-6xl tracking-tight">Engineering Blog</h1>
+            <h1 className="text-4xl font-semibold lg:text-6xl tracking-tight">Blog</h1>
             <p className="text-lg text-muted-foreground">
               Deep technical dives, product updates, and scaling stories directly from the engineers building Africa's fastest cloud.
             </p>

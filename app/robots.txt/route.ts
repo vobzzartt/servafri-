@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const baseUrl = 'https://usenubis.com';
-  
+  const baseUrl = 'https://servafri.com';
+
   const robotsTxt = `# *
 User-agent: *
 Allow: /

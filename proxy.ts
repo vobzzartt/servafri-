@@ -20,7 +20,7 @@ const buildContentSecurityPolicy = (nonce: string) =>
     "font-src 'self' data: https://fonts.gstatic.com https://css.zohocdn.com;",
     "connect-src 'self' https://prod.spline.design https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com https://www.gstatic.com https://static.cloudflareinsights.com https://www.google-analytics.com https://www.googletagmanager.com https://salesiq.zohopublic.com wss: ws:;",
     "worker-src 'self' blob: data: https://prod.spline.design;",
-    "frame-src 'self' https://prod.spline.design https://my.spline.design https://unpkg.com https://cdn.jsdelivr.net https://status.usenubis.com https://www.youtube.com https://www.youtube-nocookie.com;",
+    "frame-src 'self' https://prod.spline.design https://my.spline.design https://unpkg.com https://cdn.jsdelivr.net https://servafri.com https://www.youtube.com https://www.youtube-nocookie.com;",
     "object-src 'none';",
     "base-uri 'self';",
     "frame-ancestors 'none';",

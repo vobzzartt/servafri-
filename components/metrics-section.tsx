@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 // @ts-ignore
 import createGlobe from 'cobe'
+import { SplineViewer } from './spline-viewer'
 import { Card, CardContent } from '@/components/ui/card'
 import { CheckCircle2, Globe, Activity, Terminal } from 'lucide-react'
 
@@ -12,13 +13,14 @@ const TerminalOutput = () => {
   const [currentLine, setCurrentLine] = useState("")
   
   const sequence = [
-    { text: "> Contacting African edge locations...", delay: 400 },
-    { text: "> Authenticating routing peers...", delay: 600 },
-    { text: "> Provisioning bare-metal node [Lagos, NG]...", delay: 1000 },
-    { text: "--------- ANYCAST SYNC SUCCESS ---------", delay: 800 },
-    { text: "> Memory: 1.2TB / 2.0TB Allocated", delay: 1500 },
-    { text: "> Network Link: 100Gbps Active", delay: 1000 },
-    { text: "> Root access granted.", delay: 500 }
+    { text: "> [SYSTEM] Initializing sovereign cloud core...", delay: 400 },
+    { text: "> [NETWORK] Establishing BGP peering with African edge nodes...", delay: 600 },
+    { text: "> [SECURITY] Validating zero-trust certificates...", delay: 500 },
+    { text: "> [NODE] Provisioning bare-metal compute [Lagos, NG]...", delay: 1000 },
+    { text: "--------- ANYCAST SYNC SUCCESSFUL ---------", delay: 800 },
+    { text: "> [INFO] NVMe Storage Cluster: 8.4PB Online", delay: 1200 },
+    { text: "> [INFO] Global Network Link: 100Gbps (Healthy)", delay: 1000 },
+    { text: "> [AUTH] Superuser session granted.", delay: 500 }
   ]
 
   useEffect(() => {
@@ -75,75 +77,77 @@ const TerminalOutput = () => {
 }
 
 const initialRegions = [
-  { name: 'Lagos, NG', baseValue: 1, value: 1, unit: 'ms', status: 'ONLINE', jitter: 1 },
-  { name: 'New York, US', baseValue: 85, value: 85, unit: 'ms', status: 'ONLINE', jitter: 2 },
-  { name: 'London, GB', baseValue: 68, value: 68, unit: 'ms', status: 'ONLINE', jitter: 1 },
-  { name: 'Amsterdam, NL', baseValue: 71, value: 71, unit: 'ms', status: 'ONLINE', jitter: 2 },
-  { name: 'Frankfurt, DE', baseValue: 77, value: 77, unit: 'ms', status: 'ONLINE', jitter: 2 },
-  { name: 'Singapore, SG', baseValue: 208, value: 208, unit: 'ms', status: 'ONLINE', jitter: 4 },
-  { name: 'Sydney, AU', baseValue: 245, value: 245, unit: 'ms', status: 'ONLINE', jitter: 5 },
+  { name: 'Lagos, NG', baseValue: 1.2, value: 1.2, unit: 'ms', status: 'ONLINE', jitter: 0.2 },
+  { name: 'Accra, GH', baseValue: 15, value: 15, unit: 'ms', status: 'ONLINE', jitter: 1 },
+  { name: 'Nairobi, KE', baseValue: 28, value: 28, unit: 'ms', status: 'ONLINE', jitter: 2 },
+  { name: 'Johannesburg, ZA', baseValue: 34, value: 34, unit: 'ms', status: 'ONLINE', jitter: 2 },
+  { name: 'Cairo, EG', baseValue: 52, value: 52, unit: 'ms', status: 'ONLINE', jitter: 3 },
+  { name: 'London, GB', baseValue: 68, value: 68, unit: 'ms', status: 'ONLINE', jitter: 2 },
+  { name: 'New York, US', baseValue: 86, value: 86, unit: 'ms', status: 'ONLINE', jitter: 3 },
+  { name: 'Singapore, SG', baseValue: 208, value: 208, unit: 'ms', status: 'ONLINE', jitter: 5 },
+  { name: 'Sydney, AU', baseValue: 245, value: 245, unit: 'ms', status: 'ONLINE', jitter: 6 },
+  { name: 'São Paulo, BR', baseValue: 180, value: 180, unit: 'ms', status: 'ONLINE', jitter: 5 },
 ]
 
 function GlobeVisualization() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-
-  useEffect(() => {
-    let phi = 4.5
-    if (!canvasRef.current) return
-
-    const globe = createGlobe(canvasRef.current, {
-      devicePixelRatio: 2,
-      width: 800,
-      height: 800,
-      phi: 0,
-      theta: 0.3,
-      dark: 1,
-      diffuse: 1.2,
-      mapSamples: 16000,
-      mapBrightness: 2,
-      baseColor: [0.1, 0.1, 0.12], // Dark gray
-      markerColor: [0.0, 0.4, 1.0], // Primary bright blue
-      glowColor: [0.05, 0.05, 0.06],
-      markers: [
-        { location: [6.5244, 3.3792], size: 0.1 }, // Lagos
-        { location: [40.7128, -74.0060], size: 0.05 }, // NY
-        { location: [51.5074, -0.1278], size: 0.05 }, // London
-        { location: [50.1109, 8.6821], size: 0.05 }, // Frankfurt
-        { location: [1.3521, 103.8198], size: 0.04 }, // Singapore
-        { location: [-33.8688, 151.2093], size: 0.04 }, // Sydney
-      ],
-      // @ts-ignore
-      onRender: (state: Record<string, any>) => {
-        state.phi = phi
-        phi += 0.003
-      }
-    })
-
-    return () => globe.destroy()
-  }, [])
-
   return (
-    <div className="absolute inset-0 flex items-center justify-center opacity-60">
-       <canvas
-          ref={canvasRef}
-          style={{ width: 400, height: 400, maxWidth: "100%", aspectRatio: 1 }}
-          className="rounded-full translate-y-12"
-       />
+    <div className="w-full h-full flex items-center justify-center z-20 pointer-events-auto">
+       <div className="w-[280px] h-[280px] sm:w-[350px] sm:h-[350px] relative overflow-hidden rounded-full bg-black shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)]">
+          <iframe 
+             src="https://my.spline.design/n2ArOnqmbUvCzhSc/" 
+             className="absolute w-[150%] h-[150%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-0 pointer-events-none"
+             title="ServAfri 3D Globe"
+          />
+          {/* Overlay to capture clicks but keep the visual */}
+          <div className="absolute inset-0 z-30 bg-transparent" />
+       </div>
     </div>
   )
 }
 
 export function MetricsSection() {
   const [regions, setRegions] = useState(initialRegions)
+  const [vmCount, setVmCount] = useState(62)
+  const [avgLatency, setAvgLatency] = useState(1.2)
+  const [packetsPerSec, setPacketsPerSec] = useState(12.8)
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    // Latency jitter (fast rotation)
+    const latencyInterval = setInterval(() => {
+      setAvgLatency(prev => {
+        const change = (Math.random() - 0.5) * 0.2
+        const next = Math.max(1.0, Math.min(2.8, prev + change))
+        return Number(next.toFixed(1))
+      })
+      
+      setPacketsPerSec(prev => {
+        const change = (Math.random() - 0.5) * 0.4
+        const next = Math.max(10.1, Math.min(15.5, prev + change))
+        return Number(next.toFixed(1))
+      })
+    }, 3000)
+
+    // VM Count rotation (now every 30 seconds so you can see it move)
+    const vmInterval = setInterval(() => {
+      setVmCount(prev => {
+        const change = Math.floor(Math.random() * 5) - 2 // Small realistic fluctuation
+        const next = Math.max(60, Math.min(189, prev + change))
+        return next
+      })
+    }, 30000) // 30 seconds
+
+    const regionInterval = setInterval(() => {
       setRegions(current => current.map(r => ({
         ...r,
-        value: Math.max(1, r.baseValue + (Math.random() > 0.5 ? 1 : Math.random() > 0.5 ? -1 : 0) * Math.floor(Math.random() * (r.jitter + 1)))
+        value: Number(Math.max(r.baseValue, r.baseValue + (Math.random() - 0.5) * r.jitter).toFixed(1))
       })))
     }, 1500)
-    return () => clearInterval(interval)
+
+    return () => {
+      clearInterval(latencyInterval)
+      clearInterval(vmInterval)
+      clearInterval(regionInterval)
+    }
   }, [])
   return (
     <section className="w-full py-20 lg:py-32 bg-muted/20 border-y border-muted overflow-hidden">
@@ -174,15 +178,15 @@ export function MetricsSection() {
           {/* Metrics 2x2 Block */}
           <div className="lg:col-span-1 grid grid-cols-2 grid-rows-2 gap-4">
              <Card className="flex flex-col justify-center items-start p-6 border-muted shadow-sm bg-background/50">
-                <span className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">4.2ms</span>
+                <span className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{avgLatency}ms</span>
                 <span className="text-xs font-medium text-muted-foreground mt-2 uppercase tracking-widest">Avg. Latency</span>
              </Card>
              <Card className="flex flex-col justify-center items-start p-6 border-muted shadow-sm bg-background/50 relative overflow-hidden">
                 <div className="absolute top-4 right-4 flex items-center gap-1.5">
-                   <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-                   <span className="text-[10px] font-bold text-red-500 uppercase tracking-wider">Live</span>
+                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                   <span className="text-[10px] font-bold text-green-500 uppercase tracking-wider">Live</span>
                 </div>
-                <span className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mt-2">12.8M</span>
+                <span className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mt-2">{packetsPerSec}M</span>
                 <span className="text-xs font-medium text-muted-foreground mt-2 uppercase tracking-widest">Packets / Sec</span>
              </Card>
              <Card className="flex flex-col justify-center items-start p-6 border-muted shadow-sm bg-background/50">
@@ -190,7 +194,7 @@ export function MetricsSection() {
                 <span className="text-xs font-medium text-muted-foreground mt-2 uppercase tracking-widest">Uptime</span>
              </Card>
              <Card className="flex flex-col justify-center items-start p-6 border-muted shadow-sm bg-background/50">
-                <span className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">147K</span>
+                <span className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{vmCount}</span>
                 <span className="text-xs font-medium text-muted-foreground mt-2 uppercase tracking-widest">Active VMs</span>
              </Card>
           </div>
@@ -203,7 +207,7 @@ export function MetricsSection() {
              </div>
              
              {/* World Map Visualization */}
-             <div className="h-48 w-full relative bg-foreground/[0.02] border-b border-muted overflow-hidden flex items-center justify-center">
+             <div className="h-64 w-full relative bg-foreground/[0.02] border-b border-muted overflow-hidden flex items-center justify-center">
                 <GlobeVisualization />
                 <span className="text-[10px] z-10 font-mono text-muted-foreground opacity-70 absolute bottom-3 right-3 uppercase">NETWORK_TOPOLOGY.MAP</span>
              </div>

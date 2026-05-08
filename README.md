@@ -1,39 +1,45 @@
 # ServAfri
 
-Cloud infrastructure built for developers
+ServAfri is a cloud infrastructure platform designed for Africa, focusing on localized performance and predictable pricing. This repository contains the frontend application and the official waitlist.
 
-ServAfri is a cloud platform that enables developers and organizations to deploy applications without managing physical hardware. The platform provides compute, storage, networking, and related services through a web console and REST API, with a focus on performance, simplicity, and local accessibility.
+## About
 
-[![Website](https://img.shields.io/badge/Website-servafri.com-blue)](https://servafri.com)
-[![Status](https://img.shields.io/badge/Status-Early%20Access-orange)](https://status.servafri.com)
-[![Documentation](https://img.shields.io/badge/Docs-docs.servafri.com-green)](https://docs.servafri.com)
+The ServAfri frontend is built to be fast and developer-friendly. It serves as the primary landing page where builders can request early access to our sovereign cloud services. The platform emphasizes cheaper and more affordable compute service, low latency accross the continent and localized billing in African currencies to remove the friction of global cloud providers.
 
----
+## Tech Stack
 
-## Overview
+- Framework: Next.js 15 (App Router)
+- Styling: Tailwind CSS 4
+- State & Auth: Supabase
+- Animations: Framer Motion
 
-ServAfri provides scalable cloud infrastructure designed for modern application deployment, with a focus on real-world usage across Africa. Whether you're running a small project or production workloads, the platform delivers the compute, storage, and networking capabilities needed to build and scale reliably.
+## Installation
 
----
+To run the frontend locally, follow these steps:
 
-## Key Services
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/servafrihq/servafri.git
+   ```
 
-| Service | Description |
-|---------|-------------|
-| Compute | Virtual machines with configurable CPU, memory, and storage |
-| Storage | Block storage for persistent data and application workloads |
-| Networking | Private networks, load balancers, floating IPs, and firewall rules |
-| API & Console | RESTful API and web-based dashboard for managing infrastructure |
-| Billing | Pay-as-you-go, subscriptions, and local payment support |
+2. Install dependencies:
+   ```bash
+   pnpm install
+   ```
 
----
+3. Start the development server:
+   ```bash
+   pnpm dev
+   ```
 
-## Quick Start
+The application will be available at `http://localhost:3000`.
 
-### Prerequisites
+## Contributing
 
-- Node.js 18.x or higher  
-- npm, yarn, pnpm, or bun  
+This is an open source project. We welcome contributions to the UI, documentation, and overall developer experience. If you find a bug or have a suggestion, please open an issue or submit a pull request.
 
----
+## Security
+
+For security concerns, please contact security@servafri.com.
+
 

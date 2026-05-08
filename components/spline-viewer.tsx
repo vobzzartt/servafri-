@@ -40,7 +40,7 @@ export function SplineViewer({ url, className, style }: SplineViewerProps) {
     };
   }, []);
 
-  const allowSpline = useMemo(() => isDesktop && !prefersReducedMotion, [isDesktop, prefersReducedMotion]);
+  const allowSpline = useMemo(() => !prefersReducedMotion, [prefersReducedMotion]);
 
   // Defer loading until the viewer is near the viewport to reduce initial payload.
   useEffect(() => {

@@ -4,7 +4,6 @@ import { Quicksand } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { GoogleAnalytics } from "@/components/google-analytics";
-import { ZohoSalesIQ } from "@/components/zoho-salesiq";
 
 const quicksand = Quicksand({
   variable: "--font-quicksand",
@@ -224,7 +223,6 @@ export default async function RootLayout({
         </ThemeProvider>
 
         <GoogleAnalytics nonce={nonce} />
-        <ZohoSalesIQ />
       </body>
     </html>
   );
